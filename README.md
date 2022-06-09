@@ -1,6 +1,9 @@
-# pylon-ROS-camera
+# pylon-ROS-camera-VersaVIS
 
-The official pylon ROS driver for [Basler](http://www.baslerweb.com/) GigE Vision and USB3 Vision cameras
+This repo contains a modified version of the original pylon ROS driver for [Basler](http://www.baslerweb.com/) cameras. 
+This version incorporates support for the [VersaVIS](https://github.com/ethz-asl/versavis) sensor synchronisation framework. 
+
+
 
 **Please Note:**
 This project is offered with no technical support by Basler AG.
