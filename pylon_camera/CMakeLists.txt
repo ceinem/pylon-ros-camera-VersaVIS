@@ -131,6 +131,24 @@ add_dependencies(
      ${catkin_EXPORTED_TARGETS}
 )
 
+# Add pylon_camera_nodelet
+add_library(
+  ${PROJECT_NAME}_nodelet
+  src/${PROJECT_NAME}/${PROJECT_NAME}_nodelet.cpp
+)
+
+target_link_libraries(
+  ${PROJECT_NAME}_node
+   ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+   ${Pylon_LIBRARIES}
+)
+
+add_dependencies(
+  ${PROJECT_NAME}_nodelet
+  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}
+)
+
 catkin_python_setup()
 
 install(
@@ -172,6 +190,7 @@ install(
     TARGETS
      ${PROJECT_NAME}
      ${PROJECT_NAME}_node
+     ${PROJECT_NAME}_nodelet
      set_device_user_id
      IPConfigAuto
     LIBRARY DESTINATION
@@ -188,6 +207,11 @@ install(
     FILES_MATCHING PATTERN
      "*.h"
     PATTERN "internal" EXCLUDE
+)
+
+install(FILES
+  nodelet_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ## Testing ##
