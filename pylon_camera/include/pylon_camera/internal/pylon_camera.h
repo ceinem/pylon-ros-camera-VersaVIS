@@ -70,12 +70,13 @@ public:
     virtual bool grab(std::vector<uint8_t>& image);
 
     virtual bool grab(uint8_t* image);
+    virtual bool convert_to_img(const Pylon::CGrabResultPtr& ptr_grab_result, std::vector<uint8_t>& image);
 
     virtual bool setShutterMode(const pylon_camera::SHUTTER_MODE& mode);
 
     virtual bool setROI(const sensor_msgs::RegionOfInterest target_roi,
                         sensor_msgs::RegionOfInterest& reached_roi);
-    
+
     virtual bool setBinningX(const size_t& target_binning_x,
                              size_t& reached_binning_x);
 
@@ -100,11 +101,11 @@ public:
     virtual std::vector<int> detectAndCountNumUserOutputs();
 
     virtual bool setUserOutput(const int& output_id, const bool& value);
-    
+
     virtual size_t currentOffsetX();
 
     virtual size_t currentOffsetY();
-    
+
     virtual sensor_msgs::RegionOfInterest currentROI();
 
     virtual size_t currentBinningX();
@@ -149,7 +150,7 @@ public:
 
     virtual float exposureStep();
 
-    virtual std::string setOffsetXY(const int& offsetValue, bool xAxis);  
+    virtual std::string setOffsetXY(const int& offsetValue, bool xAxis);
 
     virtual std::string reverseXY(const bool& reverse_x,bool around_x);
 
@@ -241,11 +242,11 @@ public:
 
     virtual std::string setDeviceLinkThroughputLimit(const int& limit);
 
-    virtual std::string triggerDeviceReset();  
+    virtual std::string triggerDeviceReset();
 
-    virtual std::string grabbingStarting() const;  
+    virtual std::string grabbingStarting() const;
 
-    virtual std::string grabbingStopping();  
+    virtual std::string grabbingStopping();
 
     virtual std::string setMaxTransferSize(const int& maxTransferSize);
 
