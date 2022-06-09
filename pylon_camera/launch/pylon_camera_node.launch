@@ -4,7 +4,7 @@
     <arg name="startup_user_set" default="CurrentSetting" />
 
 
-    <node name="$(arg node_name)" pkg="pylon_camera" type="pylon_camera_node" output="screen"
+    <node name="pylon_camera_node" pkg="pylon_camera" type="pylon_camera_node" output="screen"
           respawn="false">
         <param name="camera_frame" value="pylon_camera" />
         <param name="device_user_id" value="1" />
@@ -14,7 +14,7 @@
         <param name="grab_timeout" value="500" />
         <param name="image_encoding" value="rgb8" />
         <param name="gige/mtu_size" value="1500"/>
-        <param name="startup_user_set" value="$(arg startup_user_set)"/>
+        <param name="startup_user_set" value="CurrentSetting"/>
         <param name="enable_status_publisher" value="true"/>
         <param name="enable_current_params_publisher" value="true"/>
     </node>
