@@ -295,6 +295,98 @@ void PylonCameraImpl<CameraTraitT>::enableContinuousAutoGain()
 }
 
 template <typename CameraTraitT>
+void PylonCameraImpl<CameraTraitT>::setExposureMode(const int& exposure_mode)
+{
+    if ( GenApi::IsAvailable(cam_->ExposureMode) )
+    {
+        if(exposure_mode == 0)
+        {
+          cam_->ExposureMode.SetValue(ExposureModeEnums::ExposureMode_Off);
+        }
+        else if (exposure_mode == 1)
+        {
+          cam_->ExposureMode.SetValue(ExposureModeEnums::ExposureMode_Timed);
+        }
+        else if (exposure_mode == 2)
+        {
+          cam_->ExposureMode.SetValue(ExposureModeEnums::ExposureMode_TriggerControlled);
+        }
+        else if (exposure_mode == 3)
+        {
+          cam_->ExposureMode.SetValue(ExposureModeEnums::ExposureMode_TriggerWidth);
+        }
+        else
+        {
+          ROS_ERROR_STREAM("Trying to set Exposure mode, but "
+              << "the camera has no Auto Gain");
+        }
+
+    }
+    else
+    {
+        ROS_ERROR_STREAM("Trying to enable Exposure mode, but "
+            << "the camera has no Auto Gain");
+    }
+}
+
+template <typename CameraTraitT>
+void PylonCameraImpl<CameraTraitT>::setExposureTime(const double& exposure_time)
+{
+    if ( GenApi::IsAvailable(cam_->ExposureTime) )
+    {
+          cam_->ExposureTime.SetValue(exposure_time);
+    }
+    else
+    {
+        ROS_ERROR_STREAM("Trying to enable Exposure mode, but "
+            << "the camera has no Auto Gain");
+    }
+}
+
+template <typename CameraTraitT>
+void PylonCameraImpl<CameraTraitT>::setAcquisitionFrameRateEnable(const bool& enable)
+{
+    if ( GenApi::IsAvailable(cam_->AcquisitionFrameRateEnable) )
+    {
+          cam_->AcquisitionFrameRateEnable.SetValue(enable);
+    }
+    else
+    {
+        ROS_ERROR_STREAM("Trying to enable AcquisitionFrameRateEnable, but "
+            << "the camera has no Auto Gain");
+    }
+}
+
+template <typename CameraTraitT>
+void PylonCameraImpl<CameraTraitT>::setAutoExposureTimeLimits(const double& lower,const double& upper)
+{
+    if ( GenApi::IsAvailable(cam_->AutoExposureTimeLowerLimit) )
+    {
+          cam_->AutoExposureTimeLowerLimit.SetValue(lower);
+          cam_->AutoExposureTimeUpperLimit.SetValue(upper);
+    }
+    else
+    {
+        ROS_ERROR_STREAM("Trying to enable setAutoExposureTimeLimits, but "
+            << "the camera has no Auto Gain");
+    }
+}
+
+template <typename CameraTraitT>
+void PylonCameraImpl<CameraTraitT>::setAutoTargetBrightness(const double& brightness)
+{
+    if ( GenApi::IsAvailable(cam_->AutoTargetBrightness) )
+    {
+          cam_->AutoTargetBrightness.SetValue(brightness);
+    }
+    else
+    {
+        ROS_ERROR_STREAM("Trying to enable setAutoTargetBrightness, but "
+            << "the camera has no Auto Gain");
+    }
+}
+
+template <typename CameraTraitT>
 void PylonCameraImpl<CameraTraitT>::disableAllRunningAutoBrightessFunctions()
 {
     is_binary_exposure_search_running_ = false;

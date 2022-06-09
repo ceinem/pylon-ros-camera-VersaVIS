@@ -45,6 +45,7 @@ struct USBCameraTrait
 {
     typedef Pylon::CBaslerUniversalInstantCamera CBaslerInstantCameraT;
     typedef Basler_UniversalCameraParams::ExposureAutoEnums ExposureAutoEnums;
+    typedef Basler_UniversalCameraParams::ExposureModeEnums ExposureModeEnums;
     typedef Basler_UniversalCameraParams::GainAutoEnums GainAutoEnums;
     typedef Basler_UniversalCameraParams::PixelFormatEnums PixelFormatEnums;
     typedef Basler_UniversalCameraParams::PixelSizeEnums PixelSizeEnums;
@@ -151,19 +152,19 @@ bool PylonUSBCamera::applyCamSpecificStartupSettings(const PylonCameraParameter&
                 cam_->UserSetSelector.SetValue(Basler_UniversalCameraParams::UserSetSelector_UserSet1);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 1 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "UserSet2")
             {
                 cam_->UserSetSelector.SetValue(Basler_UniversalCameraParams::UserSetSelector_UserSet2);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 2 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "UserSet3")
             {
                 cam_->UserSetSelector.SetValue(Basler_UniversalCameraParams::UserSetSelector_UserSet3);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 3 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "CurrentSetting")
             {
                 ROS_WARN("No user set is provided -> Camera current setting will be applied");
@@ -395,16 +396,16 @@ std::string PylonUSBCamera::setAcquisitionFrameCount(const int& frameCount)
     try
     {
         if ( GenApi::IsAvailable(cam_->AcquisitionBurstFrameCount) )
-        {  
-            cam_->AcquisitionBurstFrameCount.SetValue(frameCount);   
+        {
+            cam_->AcquisitionBurstFrameCount.SetValue(frameCount);
             return "done";
         }
         else if ( GenApi::IsAvailable(cam_->AcquisitionFrameRate) )
         {
-            cam_->AcquisitionFrameRate.SetValue(frameCount);   
+            cam_->AcquisitionFrameRate.SetValue(frameCount);
             return "done";
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the Acquisition frame count. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -424,14 +425,14 @@ int PylonUSBCamera::getAcquisitionFrameCount()
     try
     {
         if ( GenApi::IsAvailable(cam_->AcquisitionBurstFrameCount) )
-        {  
+        {
             return static_cast<int>(cam_->AcquisitionBurstFrameCount.GetValue());
         }
         else if ( GenApi::IsAvailable(cam_->AcquisitionFrameRate) )
         {
             return static_cast<int>(cam_->AcquisitionFrameRate.GetValue());
         }
-        else 
+        else
         {
              return -10000;
         }
@@ -455,15 +456,15 @@ std::string PylonUSBCamera::gammaEnable(const bool& enable)
     return "Error, the connect camera not supporting this feature";
 }
 
-template <> 
+template <>
 float PylonUSBCamera::getTemperature(){
     try
     {
         if ( GenApi::IsAvailable(cam_->DeviceTemperature) )
-        {  
-            return static_cast<float>(cam_->DeviceTemperature.GetValue());   
+        {
+            return static_cast<float>(cam_->DeviceTemperature.GetValue());
         }
-        else 
+        else
         {
              return 0.0;
         }

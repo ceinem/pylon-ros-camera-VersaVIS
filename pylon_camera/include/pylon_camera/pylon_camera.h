@@ -376,10 +376,21 @@ public:
      */
     virtual void enableContinuousAutoExposure() = 0;
 
+    virtual void setExposureMode(const int& exposure_mode) = 0;
+
+
+    virtual void setExposureTime(const double& exposure_time) = 0;
+
     /**
      * Enables the continuous auto gain mode
      */
     virtual void enableContinuousAutoGain() = 0;
+
+    virtual void setAcquisitionFrameRateEnable(const bool& enable) = 0;
+
+    virtual void setAutoExposureTimeLimits(const double& lower,const double& upper) = 0;
+
+    virtual void setAutoTargetBrightness(const double& brightness) = 0;
 
     /**
      * Get the camera type. Currently supported cameras are USB, DART and GigE
@@ -616,6 +627,7 @@ public:
      * @return error message if an error occurred or done message otherwise.
      */
     virtual std::string setTriggerMode(const bool& value) = 0 ;
+
 
     /**
      * get current trigger mode

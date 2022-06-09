@@ -186,23 +186,9 @@ protected:
     bool setBinningY(const size_t& target_binning_y,
                      size_t& reached_binning_y);
 
-    /**
-     * Service callback for updating the cameras binning setting
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setBinningCallback(camera_control_msgs::SetBinning::Request &req,
-                            camera_control_msgs::SetBinning::Response &res);
 
-    /**
-     * Service callback for updating the cameras roi setting
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setROICallback(camera_control_msgs::SetROI::Request &req,
-			camera_control_msgs::SetROI::Response &res);
+
+
 
     /**
      * Update the exposure value on the camera
@@ -212,14 +198,7 @@ protected:
      */
     bool setExposure(const float& target_exposure, float& reached_exposure);
 
-    /**
-     * Service callback for setting the exposure
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setExposureCallback(camera_control_msgs::SetExposure::Request &req,
-                             camera_control_msgs::SetExposure::Response &res);
+
 
     /**
      * Sets the target brightness which is the intensity-mean over all pixels.
@@ -240,14 +219,7 @@ protected:
                        const bool& exposure_auto,
                        const bool& gain_auto);
 
-    /**
-     * Service callback for setting the brightness
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setBrightnessCallback(camera_control_msgs::SetBrightness::Request &req,
-                               camera_control_msgs::SetBrightness::Response &res);
+
 
     /**
      * Update the gain from the camera to a target gain in percent
@@ -257,14 +229,7 @@ protected:
      */
     bool setGain(const float& target_gain, float& reached_gain);
 
-    /**
-     * Service callback for setting the desired gain in percent
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setGainCallback(camera_control_msgs::SetGain::Request &req,
-                         camera_control_msgs::SetGain::Response &res);
+
 
     /**
      * Update the gamma from the camera to a target gamma correction value
@@ -274,23 +239,8 @@ protected:
      */
     bool setGamma(const float& target_gamma, float& reached_gamma);
 
-    /**
-     * Service callback for setting the desired gamma correction value
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setGammaCallback(camera_control_msgs::SetGamma::Request &req,
-                         camera_control_msgs::SetGamma::Response &res);
 
-    /**
-     * Callback that puts the camera to sleep
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setSleepingCallback(camera_control_msgs::SetSleeping::Request &req,
-                             camera_control_msgs::SetSleeping::Response &res);
+
 
     /**
      * Returns true if the camera was put into sleep mode
@@ -380,21 +330,9 @@ protected:
      */
     bool waitForCamera(const ros::Duration& timeout) const;
 
-    /**
-     * Service callback for setting camera x-axis offset
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setOffsetXCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
-    /**
-     * Service callback for setting camera y-axis offset
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setOffsetYCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
+
+
 
     /**
      * Method to set the offset in the camera x-axis or y-axis.
@@ -404,21 +342,6 @@ protected:
      */
     std::string setOffsetXY(const int& offsetValue, bool xAxis);
 
-    /**
-     * Service callback for reversing X
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setReverseXCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-
-    /**
-     * Service callback for reversing Y
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setReverseYCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
     /**
      * reverse X, Y on the camera
@@ -428,13 +351,6 @@ protected:
      */
     std::string reverseXY(const bool& data, bool around_x);
 
-    /**
-     * Service callback for increasing/decreasing the image black level
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setBlackLevelCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * method for increasing/decreasing the image black level
@@ -443,13 +359,6 @@ protected:
      */
     std::string setBlackLevel(const int& value);
 
-    /**
-     * Service callback for setting the PGI mode
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setPGIModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
     /**
      * method for setting the PGI mode.
@@ -458,13 +367,6 @@ protected:
      */
     std::string setPGIMode(const bool& on);
 
-    /**
-     * Service callback for setting the demosaicing mode
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setDemosaicingModeCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * method for setting the demosaicing mode.
@@ -473,13 +375,6 @@ protected:
      */
     std::string setDemosaicingMode(const int& mode);
 
-    /**
-     * Service callback for setting the noise reduction value
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setNoiseReductionCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
 
     /**
      * method for setting the noise reduction value
@@ -488,13 +383,6 @@ protected:
      */
     std::string setNoiseReduction(const float& value);
 
-    /**
-     * Service callback for setting the sharpness enhancement value.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setSharpnessEnhancementCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
 
     /**
      * method for setting the sharpness enhancement value.
@@ -503,13 +391,6 @@ protected:
      */
     std::string setSharpnessEnhancement(const float& value);
 
-    /**
-     * Service callback for setting the camera light source preset
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setLightSourcePresetCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set the camera light source preset
@@ -519,27 +400,13 @@ protected:
     std::string setLightSourcePreset(const int& mode);
 
     /**
-     * Service callback for setting the camera balance white auto
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setBalanceWhiteAutoCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-    /**
      * Method to set the camera balance white auto
      * @param mode : 0 = off , 1 = once, 2 = continuous
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setBalanceWhiteAuto(const int& mode);
 
-    /**
-     * Service callback for setting the sensor readout mode (Normal or Fast)
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setSensorReadoutModeCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
+
 
     /**
      * Method to set the sensor readout mode (Normal or Fast)
@@ -548,13 +415,6 @@ protected:
      */
     std::string setSensorReadoutMode(const int& mode);
 
-    /**
-     * Service callback for setting the acquisition frame count
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setAcquisitionFrameCountCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set the camera acquisition frame count
@@ -563,13 +423,6 @@ protected:
      */
     std::string setAcquisitionFrameCount(const int& frameCount);
 
-    /**
-     * Service callback for setting the trigger selector
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setTriggerSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
      /**
      * Method to set the trigger selector
@@ -578,13 +431,6 @@ protected:
      */
     std::string setTriggerSelector(const int& mode);
 
-    /**
-     * Service callback for setting the trigger mode
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setTriggerModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
      /**
      * Method to set the trigger mode
@@ -593,13 +439,6 @@ protected:
      */
     std::string setTriggerMode(const bool& value);
 
-    /**
-     * Service callback for executing a software trigger
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool executeSoftwareTriggerCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
 
      /**
      * Method to execute a software trigger
@@ -607,13 +446,6 @@ protected:
      */
     std::string executeSoftwareTrigger();
 
-    /**
-     * Service callback for setting the camera trigger source
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setTriggerSourceCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
      /**
      * Method to set the camera trigger source.
@@ -622,13 +454,6 @@ protected:
      */
     std::string setTriggerSource(const int& source);
 
-    /**
-     * Service callback for setting the camera trigger activation type
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setTriggerActivationCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set camera trigger activation type
@@ -637,13 +462,6 @@ protected:
      */
     std::string setTriggerActivation(const int& value);
 
-    /**
-     * Service callback for setting the camera trigger delay value
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setTriggerDelayCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
 
     /**
      * Method to set camera trigger delay value
@@ -652,13 +470,6 @@ protected:
      */
     std::string setTriggerDelay(const float& value);
 
-    /**
-     * Service callback for setting the camera line selector
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setLineSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set camera line selector
@@ -667,13 +478,6 @@ protected:
      */
     std::string setLineSelector(const int& value);
 
-    /**
-     * Service callback for setting the camera line mode
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setLineModeCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set camera line Mode
@@ -683,27 +487,11 @@ protected:
     std::string setLineMode(const int& value);
 
     /**
-     * Service callback for setting the camera line source
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-   bool setLineSourceCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-    /**
      * Method to set camera line source
      * @param value : 0 = exposure active
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setLineSource(const int& value);
-
-    /**
-     * Service callback for setting the camera line inverter
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setLineInverterCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
     /**
      * Method to set camera line inverter
@@ -713,27 +501,12 @@ protected:
     std::string setLineInverter(const bool& value);
 
     /**
-     * Service callback for setting the camera line debouncer time
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setLineDebouncerTimeCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
-
-    /**
      * Method to set camera line debouncer time
      * @param value delay time in microseconds
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setLineDebouncerTime(const float& value);
 
-    /**
-     * Service callback for setting the camera user set selector
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setUserSetSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set camera user set selector
@@ -745,26 +518,11 @@ protected:
 
 
     /**
-     * Service callback for saving the user set
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool saveUserSetCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
-
-    /**
      * Method to save user set
      * @return error message if an error occurred or done message otherwise.
      */
     std::string saveUserSet();
 
-    /**
-     * Service callback for loading the user set
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool loadUserSetCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
 
     /**
      * Method to load user set
@@ -772,13 +530,6 @@ protected:
      */
     std::string loadUserSet();
 
-    /**
-     * Service callback for setting the camera user set default selector
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setUserSetDefaultSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set camera user set default selector
@@ -788,13 +539,7 @@ protected:
     std::string setUserSetDefaultSelector(const int& set);
 
 
-    /**
-     * Service callback for setting the device link throughput limit mode
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setDeviceLinkThroughputLimitModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
 
     /**
      * Method to set device link throughput limit mode
@@ -803,13 +548,7 @@ protected:
      */
     std::string setDeviceLinkThroughputLimitMode(const bool& turnOn);
 
-    /**
-     * Service callback for setting the device link throughput limit
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setDeviceLinkThroughputLimitCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
+
 
     /**
      * Method to set device link throughput limit
@@ -818,13 +557,7 @@ protected:
      */
     std::string setDeviceLinkThroughputLimit(const int& limit);
 
-    /**
-     * Service callback for reseting the camera device
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool triggerDeviceResetCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+
 
     /**
      * Method to reset the camera device
@@ -832,13 +565,7 @@ protected:
      */
     std::string triggerDeviceReset();
 
-    /**
-     * Service callback for starting camera aqcuisition
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool StartGrabbingCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+
 
     /**
      * Method to starting camera aqcuisition
@@ -846,13 +573,7 @@ protected:
      */
     std::string grabbingStarting();
 
-    /**
-     * Service callback for stopping camera aqcuisition
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool StopGrabbingCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+
 
     /**
      * Method to stopping camera aqcuisition
@@ -865,13 +586,7 @@ protected:
      */
     void currentParamPub();
 
-    /**
-     * Service callback for setting the camera image encoding
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setImageEncodingCallback(camera_control_msgs::SetStringValue::Request &req, camera_control_msgs::SetStringValue::Response &res);
+
 
     /**
      * Method to set the camera image encoding
@@ -880,13 +595,6 @@ protected:
      */
     std::string setImageEncoding(const std::string& target_ros_encoding);
 
-    /**
-     * Service callback for setting the camera Maximum USB data transfer size in bytes
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setMaxTransferSizeCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * Method to set the camera Maximum USB data transfer size in bytes
@@ -895,13 +603,6 @@ protected:
      */
     std::string setMaxTransferSize(const int& maxTransferSize);
 
-    /**
-     * Service callback for setting the camera gamma selector (GigE Camera only)
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setGammaSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
      * set the camera Gamma selector (GigE Camera only)
@@ -910,13 +611,7 @@ protected:
      */
     std::string setGammaSelector(const int& gammaSelector);
 
-    /**
-     * Service callback for enable/disable the camera gamma
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool gammaEnableCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
 
     /**
      * enable/disable the camera Gamma (GigE Camera only)
@@ -925,290 +620,17 @@ protected:
      */
     std::string gammaEnable(const int& enable);
 
-    /**
-     * Service callback for setting the camera grab timeout in ms
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setGrabTimeoutCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-    /**
-     * Service callback for setting the camera trigger timeout in ms
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setTriggerTimeoutCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-    /**
-     * Service callback for setting the white balance of the image channels
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setWhiteBalanceCallback(camera_control_msgs::SetWhiteBalance::Request &req, camera_control_msgs::SetWhiteBalance::Response &res);
 
 
-    /**
-     * Service callback for setting the camera grabbing strategy
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setGrabbingStrategyCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
-    /**
-     * Service callback for setting the size of the grab result buffer output queue.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setOutputQueueSizeCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-
-    /**
-     * Service callback for setting the maximum number of buffers that can be used simultaneously for grabbing images - Applies to: BCON, GigE, USB and blaze.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setMaxNumBufferCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-
-    /**
-     * Service callback for getting the maximum number of buffers that can be used simultaneously for grabbing images - Applies to: BCON, GigE, USB and blaze.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getMaxNumBufferCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-
-    /**
-     * Service callback for getting the GigE cameras: Number of frames received Other cameras: Number of buffers processed - Applies to: BCON, GigE, USB and blaze.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticTotalBufferCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the GigE cameras: Number of buffers with at least one failed packet. A packet is considered failed if its status is not 'success'. Other cameras: Number of buffers that returned an error.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticFailedBufferCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the Number of frames lost because there were no buffers in the queue - Applies to: GigE and blaze.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticBufferUnderrunCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the Number of failed packets, i.e., the number of packets whose status is not 'success'.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticFailedPacketCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the Number of emitted packet resend commands sent - Applies to: GigE and blaze.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticResendRequestCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the Number of corrupt or lost frames between successfully grabbed images - Applies to: BCON and USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticMissedFrameCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the Number of stream resynchronizations - Applies to: USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getStatisticResynchronizationCountCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for enabling/disabling  the chunk mode - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setChunkModeActiveCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-
-    /**
-     * Service callback for getting  the chunk mode - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkModeActiveCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for selecting the sets for the chunk - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setChunkSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the sets for the chunk - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkSelectorCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for enabling/disabling  the Includes the currently selected chunk in the payload data - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setChunkEnableCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-
-    /**
-     * Service callback for getting  the currently selected chunk in the payload data - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkEnableCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting the Value of the timestamp when the image was acquired - Applies to: GigE and ace USB..
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkTimestampCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for setting the Exposure time used to acquire the image - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setChunkExposureTimeCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
-
-    /**
-     * Service callback for getting the Exposure time used to acquire the image - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkExposureTimeCallback(camera_control_msgs::GetFloatValue::Request &req, camera_control_msgs::GetFloatValue::Response &res);
-
-    /**
-     * Service callback for getting Bit field that indicates the status of all of the camera's input and output lines when the image was acquired - Applies to: GigE, ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkLineStatusAllCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting Value of the Frame counter when the image was acquired - Applies to: GigE.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkFramecounterCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
-
-    /**
-     * Service callback for getting Value of the selected chunk counter - Applies to: ace 2 GigE, ace 2 USB and ace USB.
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool getChunkCounterValueCallback(camera_control_msgs::GetIntegerValue::Request &req, camera_control_msgs::GetIntegerValue::Response &res);
 
     ros::NodeHandle nh_;
     PylonCameraParameter pylon_camera_parameter_set_;
-    ros::ServiceServer set_binning_srv_;
-    ros::ServiceServer set_roi_srv_;
-    ros::ServiceServer set_exposure_srv_;
-    ros::ServiceServer set_gain_srv_;
-    ros::ServiceServer set_gamma_srv_;
-    ros::ServiceServer set_brightness_srv_;
-    ros::ServiceServer set_sleeping_srv_;
-    ros::ServiceServer set_offset_x_srv_;
-    ros::ServiceServer set_offset_y_srv_;
-    ros::ServiceServer reverse_x_srv_;
-    ros::ServiceServer reverse_y_srv_;
-    ros::ServiceServer set_black_level_srv_;
-    ros::ServiceServer set_PGI_mode_srv_;
-    ros::ServiceServer set_demosaicing_mode_srv_;
-    ros::ServiceServer set_noise_reduction_srv_;
-    ros::ServiceServer set_sharpness_enhancement_srv_;
-    ros::ServiceServer set_light_source_preset_srv_;
-    ros::ServiceServer set_balance_white_auto_srv_;
-    ros::ServiceServer set_sensor_readout_mode_srv_;
-    ros::ServiceServer set_acquisition_frame_count_srv_;
-    ros::ServiceServer set_trigger_selector_srv_;
-    ros::ServiceServer set_trigger_mode_srv_;
-    ros::ServiceServer execute_software_trigger_srv_;
-    ros::ServiceServer set_trigger_source_srv_;
-    ros::ServiceServer set_trigger_activation_srv_;
-    ros::ServiceServer set_trigger_delay_srv_;
-    ros::ServiceServer set_line_selector_srv_;
-    ros::ServiceServer set_line_mode_srv_;
-    ros::ServiceServer set_line_source_srv_;
-    ros::ServiceServer set_line_inverter_srv_;
-    ros::ServiceServer set_line_debouncer_time_srv_;
-    ros::ServiceServer set_user_set_selector_srv_;
-    ros::ServiceServer save_user_set_srv_;
-    ros::ServiceServer load_user_set_srv_;
-    ros::ServiceServer set_user_set_default_selector_srv_;
-    ros::ServiceServer set_device_link_throughput_limit_mode_srv_;
-    ros::ServiceServer set_device_link_throughput_limit_srv_;
-    ros::ServiceServer set_image_encoding_srv_;
+
     ros::ServiceServer reset_device_srv_;
-    ros::ServiceServer start_grabbing_srv_;
-    ros::ServiceServer stop_grabbing_srv_;
-    ros::ServiceServer set_max_transfer_size_srv_;
-    ros::ServiceServer set_gamma_selector_srv;
-    ros::ServiceServer gamma_enable_srv;
-    ros::ServiceServer set_grab_timeout_srv;
-    ros::ServiceServer set_trigger_timeout_srv;
-    ros::ServiceServer set_white_balance_srv;
-    ros::ServiceServer set_grabbing_strategy_srv;
-    ros::ServiceServer set_output_queue_size_srv;
-    ros::ServiceServer set_max_num_buffer_srv;
-    ros::ServiceServer get_max_num_buffer_srv;
-    ros::ServiceServer get_statistic_total_buffer_count_srv;
-    ros::ServiceServer get_statistic_failed_buffer_count_srv;
-    ros::ServiceServer get_statistic_buffer_underrun_count_srv;
-    ros::ServiceServer get_statistic_failed_packet_count_srv;
-    ros::ServiceServer get_statistic_resend_request_count_srv;
-    ros::ServiceServer get_statistic_missed_frame_count_srv;
-    ros::ServiceServer get_statistic_resynchronization_count_srv;
-    ros::ServiceServer set_chunk_mode_active_srv;
-    ros::ServiceServer get_chunk_mode_active_srv;
-    ros::ServiceServer set_chunk_selector_srv;
-    ros::ServiceServer get_chunk_selector_srv;
-    ros::ServiceServer set_chunk_enable_srv;
-    ros::ServiceServer get_chunk_enable_srv;
-    ros::ServiceServer get_chunk_timestamp_srv;
-    ros::ServiceServer get_chunk_exposure_time_srv;
-    ros::ServiceServer set_chunk_exposure_time_srv;
-    ros::ServiceServer get_chunk_line_status_all_srv;
-    ros::ServiceServer get_chunk_frame_counter_srv;
-    ros::ServiceServer get_chunk_counter_value_srv;
+
+
+
 
     std::vector<ros::ServiceServer> set_user_output_srvs_;
 
@@ -1252,6 +674,7 @@ protected:
     void diagnostics_timer_callback_(const ros::TimerEvent&);
     ros::Timer diagnostics_trigger_;
     void create_diagnostics(diagnostic_updater::DiagnosticStatusWrapper &stat);
+    void configMasterCam();
     void create_camera_info_diagnostics(diagnostic_updater::DiagnosticStatusWrapper &stat);
 };
 

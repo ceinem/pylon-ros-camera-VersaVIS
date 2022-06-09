@@ -146,6 +146,16 @@ public:
 
     virtual void enableContinuousAutoGain();
 
+    virtual void setExposureMode(const int& exposure_mode);
+
+    virtual void setExposureTime(const double& exposure_time);
+
+    virtual void setAcquisitionFrameRateEnable(const bool& enable);
+
+    virtual void setAutoExposureTimeLimits(const double& lower,const double& upper);
+
+    virtual void setAutoTargetBrightness(const double& brightness);
+
     virtual std::string typeName() const;
 
     virtual float exposureStep();
@@ -307,6 +317,7 @@ public:
 protected:
     typedef typename CameraTraitT::CBaslerInstantCameraT CBaslerInstantCameraT;
     typedef typename CameraTraitT::ExposureAutoEnums ExposureAutoEnums;
+    typedef typename CameraTraitT::ExposureModeEnums ExposureModeEnums;
     typedef typename CameraTraitT::GainAutoEnums GainAutoEnums;
     typedef typename CameraTraitT::PixelFormatEnums PixelFormatEnums;
     typedef typename CameraTraitT::PixelSizeEnums PixelSizeEnums;
