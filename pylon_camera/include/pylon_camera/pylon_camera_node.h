@@ -117,44 +117,9 @@ protected:
      * @return false if an error occurred
      */
     bool initAndRegister();
-
-    /**
-     * Start the camera and initialize the messages
-     * @return
-     */
     bool startGrabbing();
-
-    /**
-     * Initializing of img_rect_pub_, grab_img_rect_as_ and the pinhole_model_,
-     * in case that a valid camera info has been set
-     * @return
-     */
     void setupRectification();
-
-    /**
-     * Returns the total number of subscribers on any advertised image topic.
-     */
-    uint32_t getNumSubscribers() const;
-
-    /**
-     * Returns the number of subscribers for the raw image topic
-     */
-    uint32_t getNumSubscribersRaw() const;
-
-    /**
-     * Returns the number of subscribers for the rect image topic
-     */
-    uint32_t getNumSubscribersRect() const;
-
-    /**
-     * Grabs an image and stores the image in img_raw_msg_
-     * @return false if an error occurred.
-     */
     virtual bool grabImage();
-
-    /**
-     * Fills the ros CameraInfo-Object with the image dimensions
-     */
     virtual void setupInitialCameraInfo(sensor_msgs::CameraInfo& cam_info_msg);
 
     /**
@@ -165,115 +130,23 @@ protected:
      */
     bool setROI(const sensor_msgs::RegionOfInterest target_roi,
                 sensor_msgs::RegionOfInterest& reached_roi);
-
-    /**
-     * Update the horizontal binning_x factor to get downsampled images
-     * @param target_binning_x the target horizontal binning_x factor
-     * @param reached_binning_x the horizontal binning_x factor that could be
-     *        reached
-     * @return true if the targeted binning could be reached
-     */
-    bool setBinningX(const size_t& target_binning_x,
-                     size_t& reached_binning_x);
-
-    /**
-     * Update the vertical binning_y factor to get downsampled images
-     * @param target_binning_y the target vertical binning_y factor
-     * @param reached_binning_y the vertical binning_y factor that could be
-     *        reached
-     * @return true if the targeted binning could be reached
-     */
-    bool setBinningY(const size_t& target_binning_y,
-                     size_t& reached_binning_y);
-
-
-
-
-
-    /**
-     * Update the exposure value on the camera
-     * @param target_exposure the targeted exposure
-     * @param reached_exposure the exposure that could be reached
-     * @return true if the targeted exposure could be reached
-     */
     bool setExposure(const float& target_exposure, float& reached_exposure);
-
-
-
-    /**
-     * Sets the target brightness which is the intensity-mean over all pixels.
-     * If the target exposure time is not in the range of Pylon's auto target
-     * brightness range the extended brightness search is started.
-     * The Auto function of the Pylon-API supports values from [50 - 205].
-     * Using a binary search, this range will be extended up to [1 - 255].
-     * @param target_brightness is the desired brightness. Range is [1...255].
-     * @param current_brightness is the current brightness with the given settings.
-     * @param exposure_auto flag which indicates if the target_brightness
-     *                      should be reached adapting the exposure time
-     * @param gain_auto flag which indicates if the target_brightness should be
-     *                      reached adapting the gain.
-     * @return true if the brightness could be reached or false otherwise.
-     */
     bool setBrightness(const int& target_brightness,
                        int& reached_brightness,
                        const bool& exposure_auto,
                        const bool& gain_auto);
-
-
-
-    /**
-     * Update the gain from the camera to a target gain in percent
-     * @param target_gain the targeted gain in percent
-     * @param reached_gain the gain that could be reached
-     * @return true if the targeted gain could be reached
-     */
     bool setGain(const float& target_gain, float& reached_gain);
-
-
-
-    /**
-     * Update the gamma from the camera to a target gamma correction value
-     * @param target_gamma the targeted gamma
-     * @param reached_gamma the gamma that could be reached
-     * @return true if the targeted gamma could be reached
-     */
     bool setGamma(const float& target_gamma, float& reached_gamma);
-
-
-
-
-    /**
-     * Returns true if the camera was put into sleep mode
-     * @return true if in sleep mode
-     */
     bool isSleeping();
-
-    /**
-     * Generates the subset of points on which the brightness search will be
-     * executed in order to speed it up. The subset are the indices of the
-     * one-dimensional image_raw data vector. The base generation is done in a
-     * recursive manner, by calling genSamplingIndicesRec
-     * @return indices describing the subset of points
-     */
     void setupSamplingIndices(std::vector<std::size_t>& indices,
                               std::size_t rows,
                               std::size_t cols,
                               int downsampling_factor);
-
-    /**
-     * This function will recursively be called from above setupSamplingIndices()
-     * to generate the indices of pixels given the actual ROI.
-     * @return indices describing the subset of points
-     */
     void genSamplingIndicesRec(std::vector<std::size_t>& indices,
                                const std::size_t& min_window_height,
                                const cv::Point2i& start,
                                const cv::Point2i& end);
 
-    /**
-     * Calculates the mean brightness of the image based on the subset indices
-     * @return the mean brightness of the image
-     */
     float calcCurrentBrightness();
 
     /**
@@ -300,28 +173,7 @@ protected:
                                  const cv::Mat& D,
                                  const cv::Mat& K);
 
-    /**
-     * Callback that sets the digital user output
-     * @param output_id the ID of the user output to set
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setUserOutputCB(int output_id,
-                         std_srvs::SetBool::Request &req,
-                         std_srvs::SetBool::Response &res);
 
-    /**
-     * Callback that activates the digital user output to
-      be used as autoflash
-     * @param output_id the ID of the user output to set
-     * @param req request
-     * @param res response
-     * @return true on success
-     */
-    bool setAutoflash(const int output_id,
-                      std_srvs::SetBool::Request &req,
-                      std_srvs::SetBool::Response &res);
 
 
     /**
@@ -332,230 +184,6 @@ protected:
 
 
 
-
-
-    /**
-     * Method to set the offset in the camera x-axis or y-axis.
-     * @param offsetValue the targeted offset value.
-     * @param xAxis when true set the oddset in the x-axis, otherwise in the y-axis.
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setOffsetXY(const int& offsetValue, bool xAxis);
-
-
-    /**
-     * reverse X, Y on the camera
-     * @param reverse_x reverse the image around x-axis
-     * @param reverse_y reverse the image around y-axis
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string reverseXY(const bool& data, bool around_x);
-
-
-    /**
-     * method for increasing/decreasing the image black level
-     * @param value the new black level value
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setBlackLevel(const int& value);
-
-
-    /**
-     * method for setting the PGI mode.
-     * @param on : true = on, false = off.
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setPGIMode(const bool& on);
-
-
-    /**
-     * method for setting the demosaicing mode.
-     * @param mode : 0 = simple, 1 = Basler PGI.
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setDemosaicingMode(const int& mode);
-
-
-    /**
-     * method for setting the noise reduction value
-     * @param value : targeted noise reduction value (range : 0.0 to 0.2).
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setNoiseReduction(const float& value);
-
-
-    /**
-     * method for setting the sharpness enhancement value.
-     * @param value : targeted sharpness enhancement value (range : 1.0 to 3.98438).
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setSharpnessEnhancement(const float& value);
-
-
-    /**
-     * Method to set the camera light source preset
-     * @param mode : 0 = off, 1 = Daylight5000K, 2 = Daylight6500K, 3 = Tungsten2800K
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setLightSourcePreset(const int& mode);
-
-    /**
-     * Method to set the camera balance white auto
-     * @param mode : 0 = off , 1 = once, 2 = continuous
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setBalanceWhiteAuto(const int& mode);
-
-
-
-    /**
-     * Method to set the sensor readout mode (Normal or Fast)
-     * @param mode : 0 = normal , 1 = fast.
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setSensorReadoutMode(const int& mode);
-
-
-    /**
-     * Method to set the camera acquisition frame count
-     * @param frameCount trageted frame count.
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setAcquisitionFrameCount(const int& frameCount);
-
-
-     /**
-     * Method to set the trigger selector
-     * @param mode : 0 = Frame Start, 1 = Frame Burst Start (ace USB) / Acquisition Start (ace GigE)
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setTriggerSelector(const int& mode);
-
-
-     /**
-     * Method to set the trigger mode
-     * @param value : false = off, true = on
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setTriggerMode(const bool& value);
-
-
-     /**
-     * Method to execute a software trigger
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string executeSoftwareTrigger();
-
-
-     /**
-     * Method to set the camera trigger source.
-     * @param source : 0 = software, 1 = Line1, 2 = Line3, 3 = Line4, 4 = Action1(only selected GigE Camera)
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setTriggerSource(const int& source);
-
-
-    /**
-     * Method to set camera trigger activation type
-     * @param value : 0 = RigingEdge, 1 = FallingEdge
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setTriggerActivation(const int& value);
-
-
-    /**
-     * Method to set camera trigger delay value
-     * @param delayValue required dely value in µs
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setTriggerDelay(const float& value);
-
-
-    /**
-     * Method to set camera line selector
-     * @param value : 0 = line1, 1 = line2, 2 = line3, 3 = line4
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setLineSelector(const int& value);
-
-
-    /**
-     * Method to set camera line Mode
-     * @param value : 0 = input, 1 = output
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setLineMode(const int& value);
-
-    /**
-     * Method to set camera line source
-     * @param value : 0 = exposure active
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setLineSource(const int& value);
-
-    /**
-     * Method to set camera line inverter
-     * @param value : ture = invert line
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setLineInverter(const bool& value);
-
-    /**
-     * Method to set camera line debouncer time
-     * @param value delay time in microseconds
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setLineDebouncerTime(const float& value);
-
-
-    /**
-     * Method to set camera user set selector
-     * @param set : 0 = Default, 1 = UserSet1, 2 = UserSet2, 3 = UserSet3, 4 = HighGain, 5 = AutoFunctions, 6 = ColorRaw
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setUserSetSelector(const int& set);
-
-
-
-    /**
-     * Method to save user set
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string saveUserSet();
-
-
-    /**
-     * Method to load user set
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string loadUserSet();
-
-
-    /**
-     * Method to set camera user set default selector
-     * @param set : 0 = Default, 1 = UserSet1, 2 = UserSet2, 3 = UserSet3, 4 = HighGain, 5 = AutoFunctions, 6 = ColorRaw
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setUserSetDefaultSelector(const int& set);
-
-
-
-
-    /**
-     * Method to set device link throughput limit mode
-     * @param turnOn : true = on , false = Off
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setDeviceLinkThroughputLimitMode(const bool& turnOn);
-
-
-
-    /**
-     * Method to set device link throughput limit
-     * @param limit : device link throughput limit  Bytes/second
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setDeviceLinkThroughputLimit(const int& limit);
 
 
 
@@ -596,29 +224,6 @@ protected:
     std::string setImageEncoding(const std::string& target_ros_encoding);
 
 
-    /**
-     * Method to set the camera Maximum USB data transfer size in bytes
-     * @param maxTransferSize targeted new camera Maximum USB data transfer size in bytes
-     * @return error message in case of error occurred or done otherwise.
-     */
-    std::string setMaxTransferSize(const int& maxTransferSize);
-
-
-    /**
-     * set the camera Gamma selector (GigE Camera only)
-     * @param gammaSelector : 0 = User, 1 = sRGB
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string setGammaSelector(const int& gammaSelector);
-
-
-
-    /**
-     * enable/disable the camera Gamma (GigE Camera only)
-     * @param enable
-     * @return error message if an error occurred or done message otherwise.
-     */
-    std::string gammaEnable(const int& enable);
 
 
 
@@ -630,9 +235,6 @@ protected:
     ros::ServiceServer reset_device_srv_;
 
 
-
-
-    std::vector<ros::ServiceServer> set_user_output_srvs_;
 
     // DNB component status publisher
     ros::Publisher componentStatusPublisher;

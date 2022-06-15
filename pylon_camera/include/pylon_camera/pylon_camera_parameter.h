@@ -99,7 +99,7 @@ public:
     /**
      * Setter for the image encoding
      */
-    bool setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format); 
+    bool setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format);
 
     /**
      * Setter for the frame_rate_ initially set from ros-parameter server
@@ -120,6 +120,9 @@ public:
                           const std::string& camera_info_url);
 
 public:
+
+
+
     /** Binning factor to get downsampled images. It refers here to any camera
      * setting which combines rectangular neighborhoods of pixels into larger
      * "super-pixels." It reduces the resolution of the output image to
@@ -151,7 +154,7 @@ public:
     // values which provide an automatic image adjustment
     // If one would like to adjust image brightness, it is not
     // #######################################################################
-
+    bool is_versavis_master_;
     /**
      * The exposure time in microseconds to be set after opening the camera.
      */
@@ -269,7 +272,7 @@ public:
     /**
      * The startup user set.
      */
-    std::string startup_user_set_;    
+    std::string startup_user_set_;
 
     /**
      * The inter-package delay in ticks. Only used for GigE cameras.
@@ -305,7 +308,7 @@ public:
      * Only supported for GigE cameras. Default: true
      */
     bool auto_flash_line_3_;
-    
+
     /**
     * camera grab timeout in ms
     */
@@ -317,13 +320,13 @@ public:
     int trigger_timeout_;
 
     /**
-    * camera white balance auto 
+    * camera white balance auto
     */
     int white_balance_auto_;
     bool white_balance_auto_given_;
 
     /**
-    * camera white balance ratio 
+    * camera white balance ratio
     */
     float white_balance_ratio_red_;
     float white_balance_ratio_green_;
@@ -331,7 +334,7 @@ public:
     bool white_balance_ratio_given_;
 
     /**
-    * Camera grab strategy 
+    * Camera grab strategy
     * 0 = GrabStrategy_OneByOne
     * 1 = GrabStrategy_LatestImageOnly
     * 2 = GrabStrategy_LatestImages

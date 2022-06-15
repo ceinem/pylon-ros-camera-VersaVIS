@@ -49,7 +49,6 @@ using sensor_msgs::CameraInfoPtr;
 PylonCameraNode::PylonCameraNode()
     : nh_("~"),
       pylon_camera_parameter_set_(),
-      set_user_output_srvs_(),
       pylon_camera_(nullptr),
       it_(new image_transport::ImageTransport(nh_)),
       img_raw_pub_(it_->advertiseCamera("image_raw", 1)),
@@ -79,7 +78,7 @@ PylonCameraNode::PylonCameraNode()
 
 
 
-    configMasterCam();
+
     init();
 
 }
@@ -88,110 +87,58 @@ void PylonCameraNode::configMasterCam()
 {
   std::string res;
 
-//   ExposureAuto: "Continuous"
-// boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->enableContinuousAutoExposure() ;
-// } else {
-//     ROS_WARN("Error in enableContinuousAutoExposure(): pylon_camera_ is not ready!");
-// }
+  try
+  {
 
+    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+    // ExposureAuto: "Continuous"
+    pylon_camera_->enableContinuousAutoExposure() ;
 
-// // ExposureMode: "Timed"
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->setExposureMode(1);
-// } else {
-//     ROS_WARN("Error in setExposureMode(): pylon_camera_ is not ready!");
-// }
-//
-//
-//
-// // AcquisitionFrameRateEnable: "0"
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->setAcquisitionFrameRateEnable(false) ;
-// } else {
-//     ROS_WARN("Error in setAcquisitionFrameRateEnable(): pylon_camera_ is not ready!");
-// }
-//
-//
-// // AutoExposureTimeLowerLimit: 300.0
-// // AutoExposureTimeUpperLimit: 19000.0
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->setAutoExposureTimeLimits(300.0,19000.0) ;
-// } else {
-//     ROS_WARN("Error in setAutoExposureTimeLimits(): pylon_camera_ is not ready!");
-// }
+    // ExposureMode: "Timed"
+    pylon_camera_->setExposureMode(1);
 
+    // AcquisitionFrameRateEnable: "0"
+    pylon_camera_->setAcquisitionFrameRateEnable(false) ;
 
-// ExposureTime: 1000.0
+    // AutoExposureTimeLowerLimit: 300.0
+    // AutoExposureTimeUpperLimit: 19000.0
+    pylon_camera_->setAutoExposureTimeLimits(300.0,19000.0) ;
 
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->setExposureTime(1000.0) ;
-// } else {
-//     ROS_WARN("Error in enableContinuousAutoExposure(): pylon_camera_ is not ready!");
-// }
+    // ExposureTime: 1000.0
+    pylon_camera_->setExposureTime(1000.0) ;
 
+    // AutoTargetBrightness: 0.33
+    pylon_camera_->setAutoTargetBrightness(0.33) ;
 
+    // GainAuto: "Continuous"
+    pylon_camera_->enableContinuousAutoGain() ;
 
+     // BalanceWhiteAuto: "Continuous"
+     pylon_camera_->setBalanceWhiteAuto(2);
 
-// // AutoTargetBrightness: 0.33
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->setAutoTargetBrightness(0.33) ;
-// } else {
-//     ROS_WARN("Error in setAutoTargetBrightness(): pylon_camera_ is not ready!");
-// }
-//
-//
-//
-//
-//
-// // GainAuto: "Continuous"
-//
-// // boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-// if (pylon_camera_->isReady() )
-// {
-//   pylon_camera_->enableContinuousAutoGain() ;
-// } else {
-//     ROS_WARN("Error in enableContinuousAutoGain(): pylon_camera_ is not ready!");
-// }
+     // TriggerMode: "On"
+     pylon_camera_->setTriggerMode(true);
 
+     // TriggerSource: "Line1"
+     pylon_camera_->setTriggerSource(1);
 
-//
-// // BalanceWhiteAuto: "Continuous"
-//   res = setBalanceWhiteAuto(2);
-//   ROS_DEBUG_STREAM("Balance White Auto set to: " << res);
-//
-//
-// // TriggerMode: "On"
-//   res = setTriggerMode(true);
-//   ROS_DEBUG_STREAM("Trigger Mode set to: " << res);
-//
-// // TriggerSource: "Line1"
-//   res = setTriggerSource(1);
-//   ROS_DEBUG_STREAM("Trigger Source set to: " << res);
-//
-// // LineSelector: "Line4"
-//   res = setLineSelector(3);
-//   ROS_DEBUG_STREAM("Line Selector set to: " << res);
-//
-// // LineMode: "Output"
-//   res = setLineMode(1);
-//   ROS_DEBUG_STREAM("Line Mode set to: " << res);
-//
-//
-// // LineSource: "ExposureActive"
-//   res = setLineSource(0);
-//   ROS_DEBUG_STREAM("Line Source set to: " << res);
-//
-// // LineInverter: True
-//   res = setLineInverter(true);
-//   ROS_DEBUG_STREAM("Line Inverter set to: " << res);
+      // LineSelector: "Line4"
+      pylon_camera_->setLineSelector(3);
+
+      // LineMode: "Output"
+      pylon_camera_->setLineMode(1);
+
+      // LineSource: "ExposureActive"
+      pylon_camera_->setLineSource(0);
+
+      // LineInverter: True
+      pylon_camera_->setLineInverter(true);
+  }
+  catch ( const GenICam::GenericException &e )
+  {
+      ROS_ERROR_STREAM("Error applying camera specific startup setting for USB cameras: "
+              << e.GetDescription());
+  }
 }
 
 void PylonCameraNode::create_diagnostics(diagnostic_updater::DiagnosticStatusWrapper &stat)
@@ -251,6 +198,8 @@ void PylonCameraNode::init()
         ros::shutdown();
         return;
     }
+
+    // configMasterCam();
 
     // starting the grabbing procedure with the desired image-settings
     if ( !startGrabbing() )
@@ -364,31 +313,6 @@ bool PylonCameraNode::startGrabbing()
         return false;
     }
 
-    size_t num_user_outputs = pylon_camera_->numUserOutputs();
-    set_user_output_srvs_.resize(2*num_user_outputs);
-    for ( int i = 0; i < num_user_outputs; ++i )
-    {
-        std::string srv_name = "set_user_output_" + std::to_string(i);
-        std::string srv_name_af = "activate_autoflash_output_" + std::to_string(i);
-        if (! ros::service::exists("~" + srv_name, false))
-        {
-        set_user_output_srvs_.at(i) =
-            nh_.advertiseService< std_srvs::SetBool::Request,
-                                  std_srvs::SetBool::Response >(
-                                    srv_name,
-                                    boost::bind(&PylonCameraNode::setUserOutputCB,
-                                                this, i ,_1 ,_2));
-        }
-        if (! ros::service::exists("~" + srv_name_af, false))
-        {
-        set_user_output_srvs_.at(num_user_outputs+i) =
-            nh_.advertiseService< std_srvs::SetBool::Request,
-                                  std_srvs::SetBool::Response >(
-                                    srv_name_af,
-                                    boost::bind(&PylonCameraNode::setAutoflash,
-                                                this, i+2, _1, _2)); // ! using lines 2 and 3
-        }
-    }
     img_raw_msg_.header.frame_id = pylon_camera_parameter_set_.cameraFrame();
     // Encoding of pixels -- channel meaning, ordering, size
     // taken from the list of strings in include/sensor_msgs/image_encodings.h
@@ -443,100 +367,83 @@ bool PylonCameraNode::startGrabbing()
             ROS_WARN("Will only provide distorted /image_raw images!");
         }
     }
-    if ( pylon_camera_parameter_set_.binning_x_given_ )
-    {
-        size_t reached_binning_x;
-        setBinningX(pylon_camera_parameter_set_.binning_x_, reached_binning_x);
-        ROS_INFO_STREAM("Setting horizontal binning_x to "
-                << pylon_camera_parameter_set_.binning_x_);
-        ROS_WARN_STREAM("The image width of the camera_info-msg will "
-            << "be adapted, so that the binning_x value in this msg remains 1");
-    }
-    if ( pylon_camera_parameter_set_.binning_y_given_ )
-    {
-        size_t reached_binning_y;
-        setBinningY(pylon_camera_parameter_set_.binning_y_, reached_binning_y);
-        ROS_INFO_STREAM("Setting vertical binning_y to "
-                << pylon_camera_parameter_set_.binning_y_);
-        ROS_WARN_STREAM("The image height of the camera_info-msg will "
-            << "be adapted, so that the binning_y value in this msg remains 1");
-    }
-    if ( pylon_camera_parameter_set_.exposure_given_ )
-    {
-        float reached_exposure;
-        setExposure(pylon_camera_parameter_set_.exposure_, reached_exposure);
-        ROS_INFO_STREAM("Setting exposure to "
-                << pylon_camera_parameter_set_.exposure_ << ", reached: "
-                << reached_exposure);
-    }
-    if ( pylon_camera_parameter_set_.gain_given_ )
-    {
-        float reached_gain;
-        setGain(pylon_camera_parameter_set_.gain_, reached_gain);
-        ROS_INFO_STREAM("Setting gain to: "
-                << pylon_camera_parameter_set_.gain_ << ", reached: "
-                << reached_gain);
-    }
-    if ( pylon_camera_parameter_set_.gamma_given_ )
-    {
-        float reached_gamma;
-        setGamma(pylon_camera_parameter_set_.gamma_, reached_gamma);
-        ROS_INFO_STREAM("Setting gamma to " << pylon_camera_parameter_set_.gamma_
-                << ", reached: " << reached_gamma);
-    }
-    if ( pylon_camera_parameter_set_.brightness_given_ )
-    {
-        int reached_brightness;
-        setBrightness(pylon_camera_parameter_set_.brightness_,
-                      reached_brightness,
-                      pylon_camera_parameter_set_.exposure_auto_,
-                      pylon_camera_parameter_set_.gain_auto_);
-        ROS_INFO_STREAM("Setting brightness to: "
-                << pylon_camera_parameter_set_.brightness_ << ", reached: "
-                << reached_brightness);
-        if ( pylon_camera_parameter_set_.brightness_continuous_ )
-        {
-            if ( pylon_camera_parameter_set_.exposure_auto_ )
-            {
-                pylon_camera_->enableContinuousAutoExposure();
-            }
-            if ( pylon_camera_parameter_set_.gain_auto_ )
-            {
-                pylon_camera_->enableContinuousAutoGain();
-            }
-        }
-        else
-        {
-            pylon_camera_->disableAllRunningAutoBrightessFunctions();
-        }
-    }
+
+    // configMasterCam();
+    //
+    // if ( pylon_camera_parameter_set_.exposure_given_ )
+    // {
+    //     float reached_exposure;
+    //     setExposure(pylon_camera_parameter_set_.exposure_, reached_exposure);
+    //     ROS_INFO_STREAM("Setting exposure to "
+    //             << pylon_camera_parameter_set_.exposure_ << ", reached: "
+    //             << reached_exposure);
+    // }
+    // if ( pylon_camera_parameter_set_.gain_given_ )
+    // {
+    //     float reached_gain;
+    //     setGain(pylon_camera_parameter_set_.gain_, reached_gain);
+    //     ROS_INFO_STREAM("Setting gain to: "
+    //             << pylon_camera_parameter_set_.gain_ << ", reached: "
+    //             << reached_gain);
+    // }
+    // if ( pylon_camera_parameter_set_.gamma_given_ )
+    // {
+    //     float reached_gamma;
+    //     setGamma(pylon_camera_parameter_set_.gamma_, reached_gamma);
+    //     ROS_INFO_STREAM("Setting gamma to " << pylon_camera_parameter_set_.gamma_
+    //             << ", reached: " << reached_gamma);
+    // }
+    // if ( pylon_camera_parameter_set_.brightness_given_ )
+    // {
+    //     int reached_brightness;
+    //     setBrightness(pylon_camera_parameter_set_.brightness_,
+    //                   reached_brightness,
+    //                   pylon_camera_parameter_set_.exposure_auto_,
+    //                   pylon_camera_parameter_set_.gain_auto_);
+    //     ROS_INFO_STREAM("Setting brightness to: "
+    //             << pylon_camera_parameter_set_.brightness_ << ", reached: "
+    //             << reached_brightness);
+    //     if ( pylon_camera_parameter_set_.brightness_continuous_ )
+    //     {
+    //         if ( pylon_camera_parameter_set_.exposure_auto_ )
+    //         {
+    //             pylon_camera_->enableContinuousAutoExposure();
+    //         }
+    //         if ( pylon_camera_parameter_set_.gain_auto_ )
+    //         {
+    //             pylon_camera_->enableContinuousAutoGain();
+    //         }
+    //     }
+    //     else
+    //     {
+    //         pylon_camera_->disableAllRunningAutoBrightessFunctions();
+    //     }
+    // }
 
     ROS_INFO_STREAM("Startup settings: "
             << "encoding = '" << pylon_camera_->currentROSEncoding() << "', "
-            << "binning = [" << pylon_camera_->currentBinningX() << ", "
-            << pylon_camera_->currentBinningY() << "], "
             << "exposure = " << pylon_camera_->currentExposure() << ", "
             << "gain = " << pylon_camera_->currentGain() << ", "
             << "gamma = " <<  pylon_camera_->currentGamma() << ", "
             << "shutter mode = "
             << pylon_camera_parameter_set_.shutterModeString());
     // Framerate Settings
-    if ( pylon_camera_->maxPossibleFramerate() < pylon_camera_parameter_set_.frameRate() )
-    {
-        ROS_INFO("Desired framerate %.2f is higher than max possible. Will limit framerate to: %.2f Hz",
-                 pylon_camera_parameter_set_.frameRate(),
-                 pylon_camera_->maxPossibleFramerate());
-        pylon_camera_parameter_set_.setFrameRate(
-                nh_,
-                pylon_camera_->maxPossibleFramerate());
-    }
-    else if ( pylon_camera_parameter_set_.frameRate() == -1 )
-    {
-        pylon_camera_parameter_set_.setFrameRate(nh_,
-                                                 pylon_camera_->maxPossibleFramerate());
-        ROS_INFO("Max possible framerate is %.2f Hz",
-                 pylon_camera_->maxPossibleFramerate());
-    }
+    // if ( pylon_camera_->maxPossibleFramerate() < pylon_camera_parameter_set_.frameRate() )
+    // {
+    //     ROS_INFO("Desired framerate %.2f is higher than max possible. Will limit framerate to: %.2f Hz",
+    //              pylon_camera_parameter_set_.frameRate(),
+    //              pylon_camera_->maxPossibleFramerate());
+    //     pylon_camera_parameter_set_.setFrameRate(
+    //             nh_,
+    //             pylon_camera_->maxPossibleFramerate());
+    // }
+    // else if ( pylon_camera_parameter_set_.frameRate() == -1 )
+    // {
+    //     pylon_camera_parameter_set_.setFrameRate(nh_,
+    //                                              pylon_camera_->maxPossibleFramerate());
+    //     ROS_INFO("Max possible framerate is %.2f Hz",
+    //              pylon_camera_->maxPossibleFramerate());
+    // }
     return true;
 }
 
@@ -617,11 +524,6 @@ void PylonCameraNode::spin()
         }
         delete pylon_camera_;
         pylon_camera_ = nullptr;
-        for ( ros::ServiceServer& user_output_srv : set_user_output_srvs_ )
-        {
-            user_output_srv.shutdown();
-        }
-        set_user_output_srvs_.clear();
         ros::Duration(0.5).sleep();  // sleep for half a second
         init();
         return;
@@ -646,10 +548,6 @@ void PylonCameraNode::spin()
 
             // Publish via image_transport
             img_raw_pub_.publish(img_raw_msg_, *cam_info);
-            // image_numbered_msgs::ImageNumbered raw_img_numbered;
-            // raw_img_numbered.image = img_raw_msg_;
-            // raw_img_numbered.number = 1;
-            // raw_img_numbered.number = pylon_camera_->getImageNumber();
             image_numbered_pub_.publish(raw_img_numbered_);
 
         if (camera_info_manager_->isCalibrated() )
@@ -970,25 +868,6 @@ camera_control_msgs::GrabImagesResult PylonCameraNode::grabImagesRaw(
     return result;
 }
 
-bool PylonCameraNode::setUserOutputCB(const int output_id,
-                                      std_srvs::SetBool::Request &req,
-                                      std_srvs::SetBool::Response &res)
-{
-    res.success = pylon_camera_->setUserOutput(output_id, req.data);
-    return true;
-}
-
-bool PylonCameraNode::setAutoflash(const int output_id,
-                                   std_srvs::SetBool::Request &req,
-                                   std_srvs::SetBool::Response &res)
-{
-    ROS_INFO("AUtoFlashCB: %i -> %i", output_id, req.data);
-    std::map<int, bool> auto_flashs;
-    auto_flashs[output_id] = req.data;
-    pylon_camera_->setAutoflash(auto_flashs);
-    res.success = true;
-    return true;
-}
 
 const double& PylonCameraNode::frameRate() const
 {
@@ -1072,13 +951,7 @@ void PylonCameraNode::setupInitialCameraInfo(sensor_msgs::CameraInfo& cam_info_m
     //  This holds for both images of a stereo pair.
     cam_info_msg.P.assign(0.0);
 
-    // Binning refers here to any camera setting which combines rectangular
-    // neighborhoods of pixels into larger "super-pixels." It reduces the
-    // resolution of the output image to (width / binning_x) x (height / binning_y).
-    // The default values binning_x = binning_y = 0 is considered the same as
-    // binning_x = binning_y = 1 (no subsampling).
-    cam_info_msg.binning_x = pylon_camera_->currentBinningX();
-    cam_info_msg.binning_y = pylon_camera_->currentBinningY();
+
 
     // Region of interest (subwindow of full camera resolution), given in full
     // resolution (unbinned) image coordinates. A particular ROI always denotes
@@ -1168,95 +1041,7 @@ bool PylonCameraNode::setROI(const sensor_msgs::RegionOfInterest target_roi,
 }
 
 
-bool PylonCameraNode::setBinningX(const size_t& target_binning_x,
-                                  size_t& reached_binning_x)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->setBinningX(target_binning_x, reached_binning_x) )
-    {
-        // retry till timeout
-        ros::Rate r(10.0);
-        ros::Time timeout(ros::Time::now() + ros::Duration(2.0));
-        while ( ros::ok() )
-        {
-            if ( pylon_camera_->setBinningX(target_binning_x, reached_binning_x) )
-            {
-                break;
-            }
-            if ( ros::Time::now() > timeout )
-            {
-                ROS_ERROR_STREAM("Error in setBinningX(): Unable to set target "
-                << "binning_x factor before timeout");
-                CameraInfoPtr cam_info(new CameraInfo(camera_info_manager_->getCameraInfo()));
-                cam_info->binning_x = pylon_camera_->currentBinningX();
-                camera_info_manager_->setCameraInfo(*cam_info);
-                img_raw_msg_.width = pylon_camera_->imageCols();
-                // step = full row length in bytes, img_size = (step * rows), imagePixelDepth
-                // already contains the number of channels
-                img_raw_msg_.step = img_raw_msg_.width * pylon_camera_->imagePixelDepth();
-                return false;
-            }
-            r.sleep();
-        }
-    }
-    CameraInfoPtr cam_info(new CameraInfo(camera_info_manager_->getCameraInfo()));
-    cam_info->binning_x = pylon_camera_->currentBinningX();
-    camera_info_manager_->setCameraInfo(*cam_info);
-    img_raw_msg_.width = pylon_camera_->imageCols();
-    // step = full row length in bytes, img_size = (step * rows), imagePixelDepth
-    // already contains the number of channels
-    img_raw_msg_.step = img_raw_msg_.width * pylon_camera_->imagePixelDepth();
-    setupSamplingIndices(sampling_indices_,
-                         pylon_camera_->imageRows(),
-                         pylon_camera_->imageCols(),
-                         pylon_camera_parameter_set_.downsampling_factor_exp_search_);
-    return true;
-}
 
-bool PylonCameraNode::setBinningY(const size_t& target_binning_y,
-                                  size_t& reached_binning_y)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->setBinningY(target_binning_y, reached_binning_y) )
-    {
-        // retry till timeout
-        ros::Rate r(10.0);
-        ros::Time timeout(ros::Time::now() + ros::Duration(2.0));
-        while ( ros::ok() )
-        {
-            if ( pylon_camera_->setBinningY(target_binning_y, reached_binning_y) )
-            {
-                break;
-            }
-            if ( ros::Time::now() > timeout )
-            {
-                ROS_ERROR_STREAM("Error in setBinningY(): Unable to set target "
-                    << "binning_y factor before timeout");
-                CameraInfoPtr cam_info(new CameraInfo(camera_info_manager_->getCameraInfo()));
-                cam_info->binning_y = pylon_camera_->currentBinningY();
-                camera_info_manager_->setCameraInfo(*cam_info);
-                img_raw_msg_.height = pylon_camera_->imageRows();
-                // step = full row length in bytes, img_size = (step * rows), imagePixelDepth
-                // already contains the number of channels
-                img_raw_msg_.step = img_raw_msg_.width * pylon_camera_->imagePixelDepth();
-                return false;
-            }
-            r.sleep();
-        }
-    }
-    CameraInfoPtr cam_info(new CameraInfo(camera_info_manager_->getCameraInfo()));
-    cam_info->binning_y = pylon_camera_->currentBinningY();
-    camera_info_manager_->setCameraInfo(*cam_info);
-    img_raw_msg_.height = pylon_camera_->imageRows();
-    // step = full row length in bytes, img_size = (step * rows), imagePixelDepth
-    // already contains the number of channels
-    img_raw_msg_.step = img_raw_msg_.width * pylon_camera_->imagePixelDepth();
-    setupSamplingIndices(sampling_indices_,
-                         pylon_camera_->imageRows(),
-                         pylon_camera_->imageCols(),
-                         pylon_camera_parameter_set_.downsampling_factor_exp_search_);
-    return true;
-}
 
 
 
@@ -1703,407 +1488,7 @@ bool PylonCameraNode::isSleeping()
 }
 
 
-
-
-
-
-std::string PylonCameraNode::setOffsetXY(const int& offsetValue, bool xAxis)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setOffsetXY(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setOffsetXY(offsetValue,xAxis) ;
-}
-
-
-std::string PylonCameraNode::reverseXY(const bool& data, bool around_x)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in reverseXY(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->reverseXY(data, around_x);
-}
-
-std::string PylonCameraNode::setBlackLevel(const int& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setBlackLevel(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-
-    return pylon_camera_->setBlackLevel(value) ;
-}
-
-
-
-std::string PylonCameraNode::setPGIMode(const bool& on)
-{   // mode 0 = Simple
-    // mode 1 = Basler PGI
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setPGIMode(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setPGIMode(on);
-}
-
-
-std::string PylonCameraNode::setDemosaicingMode(const int& mode)
-{   // mode 0 = Simple
-    // mode 1 = Basler PGI
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setDemosaicingMode(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setDemosaicingMode(mode);
-}
-
-
-std::string PylonCameraNode::setNoiseReduction(const float& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setNoiseReduction(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setNoiseReduction(value);
-}
-
-
-std::string PylonCameraNode::setSharpnessEnhancement(const float& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setSharpnessEnhancement(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setSharpnessEnhancement(value);
-}
-
-
-
-std::string PylonCameraNode::setLightSourcePreset(const int& mode)
-{   // mode 0 = Off
-    // mode 1 = Daylight5000K
-    // mode 2 = Daylight6500K
-    // mode 3 = Tungsten2800K
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setLightSourcePreset(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-      return pylon_camera_->setLightSourcePreset(mode) ;
-}
-
-
-
-std::string PylonCameraNode::setBalanceWhiteAuto(const int& mode)
-{   // mode 0 = Off
-    // mode 1 = Once
-    // mode 2 = Continuous
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setBalanceWhiteAuto(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-      return pylon_camera_->setBalanceWhiteAuto(mode) ;
-}
-
-
-
-
-std::string PylonCameraNode::setSensorReadoutMode(const int& mode)
-{   // mode = 0 : normal readout mode
-    // mode = 1 : fast readout mode
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setSensorReadoutMode(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setSensorReadoutMode(mode) ;
-}
-
-
-
-std::string PylonCameraNode::setAcquisitionFrameCount(const int& frameCount)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setAcquisitionFrameCount(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setAcquisitionFrameCount(frameCount) ;
-}
-
-
-
-std::string PylonCameraNode::setTriggerSelector(const int& mode)
-{   // mode 0 = Frame start
-    // mode 1 = Frame burst start (ace USB cameras) / Acquisition Start (ace GigE cameras)
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setTriggerSelector(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setTriggerSelector(mode) ;
-}
-
-
-
-std::string PylonCameraNode::setTriggerMode(const bool& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setTriggerMode(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setTriggerMode(value) ;
-}
-
-
-std::string PylonCameraNode::executeSoftwareTrigger()
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in executeSoftwareTrigger(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->executeSoftwareTrigger() ;
-}
-
-
-
-std::string PylonCameraNode::setTriggerSource(const int& source)
-{   // source 0 = Software
-    // source 1 = Line1
-    // source 2 = Line3
-    // source 2 = Line4
-    // source 4 = Action1(only selected GigE Camera)
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setTriggerSource(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setTriggerSource(source) ;
-}
-
-
-
-std::string PylonCameraNode::setTriggerActivation(const int& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setTriggerActivation(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setTriggerActivation(value) ;
-}
-
-
-
-std::string PylonCameraNode::setTriggerDelay(const float& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setTriggerDelay(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    if ((value >= 0) && (value <= 1000000))
-    {
-      return pylon_camera_->setTriggerDelay(value) ;
-    }
-    else
-    {
-      return "Error: the trigger delay value is out of range (0 - 1,000,000)";
-    }
-}
-
-
-
-std::string PylonCameraNode::setLineSelector(const int& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setLineSelector(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setLineSelector(value) ;
-}
-
-
-
-std::string PylonCameraNode::setLineMode(const int& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setLineMode(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setLineMode(value) ;
-}
-
-
-
-std::string PylonCameraNode::setLineSource(const int& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setLineSource(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setLineSource(value) ;
-}
-
-
-
-std::string PylonCameraNode::setLineInverter(const bool& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setLineInverter(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setLineInverter(value) ;
-}
-
-
-std::string PylonCameraNode::setLineDebouncerTime(const float& value)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setLineDebouncerTime(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    if ((value >= 0) && (value <= 20000))
-    {
-      return pylon_camera_->setLineDebouncerTime(value) ;
-    }
-    else
-    {
-      return "Error : given line debouncer time value is out of rane (0-20,000)";
-    }
-}
-
-
-
-std::string PylonCameraNode::setUserSetSelector(const int& set)
-{   // set 0 = Default
-    // set 1 = UserSet1
-    // set 2 = UserSet2
-    // set 3 = UserSet3
-    // set 4 = HighGain
-    // set 5 = AutoFunctions
-    // set 6 = ColorRaw
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setUserSetSelector(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setUserSetSelector(set) ;
-}
-
-
-
-
-std::string PylonCameraNode::saveUserSet()
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in saveUserSet(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->saveUserSet() ;
-}
-
-
-
-std::string PylonCameraNode::loadUserSet()
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in loadUserSet(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->loadUserSet() ;
-}
-
-
-
-std::string PylonCameraNode::setUserSetDefaultSelector(const int& set)
-{   // set 0 = Default
-    // set 1 = UserSet1
-    // set 2 = UserSet2
-    // set 3 = UserSet3
-    // set 4 = HighGain
-    // set 5 = AutoFunctions
-    // set 6 = ColorRaw
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setUserSetDefaultSelector(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setUserSetDefaultSelector(set) ;
-}
-
 // USER CONTROL
-
-
-
-std::string PylonCameraNode::setDeviceLinkThroughputLimitMode(const bool& turnOn)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setDeviceLinkThroughputLimitMode(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-      return pylon_camera_->setDeviceLinkThroughputLimitMode(turnOn) ;
-}
-
-
-
-std::string PylonCameraNode::setDeviceLinkThroughputLimit(const int& limit)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setDeviceLinkThroughputLimit(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-      return pylon_camera_->setDeviceLinkThroughputLimit(limit) ;
-}
 
 
 std::string PylonCameraNode::triggerDeviceReset()
@@ -2165,44 +1550,10 @@ std::string PylonCameraNode::setImageEncoding(const std::string& target_ros_enco
 
 
 
-std::string PylonCameraNode::setMaxTransferSize(const int& maxTransferSize)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setMaxTransferSize(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setMaxTransferSize(maxTransferSize) ;
-}
 
 
 
-std::string PylonCameraNode::setGammaSelector(const int& gammaSelector)
-{
-    // gammaSelector 0 = User
-    // gammaSelector 1 = sRGB
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in setGammaSelector(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->setGammaSelector(gammaSelector) ;
-}
 
-
-
-std::string PylonCameraNode::gammaEnable(const int& enable)
-{
-    boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
-    if ( !pylon_camera_->isReady() )
-    {
-        ROS_WARN("Error in gammaEnable(): pylon_camera_ is not ready!");
-        return "pylon camera is not ready!";
-    }
-    return pylon_camera_->gammaEnable(enable) ;
-}
 
 
 
@@ -2252,8 +1603,6 @@ void PylonCameraNode::currentParamPub()
       params.exposure = pylon_camera_->currentExposure();
       params.gain = pylon_camera_->currentGain();
       params.gamma = pylon_camera_->currentGamma();
-      params.binning_x = static_cast<uint32_t>(pylon_camera_->currentBinningX());
-      params.binning_y = static_cast<uint32_t>(pylon_camera_->currentBinningY());
       params.roi = pylon_camera_->currentROI();
       params.available_image_encoding = pylon_camera_->detectAvailableImageEncodings(false);
       params.current_image_encoding = pylon_camera_->currentBaslerEncoding();

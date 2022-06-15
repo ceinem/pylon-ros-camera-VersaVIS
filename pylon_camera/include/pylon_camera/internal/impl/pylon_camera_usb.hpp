@@ -86,6 +86,8 @@ typedef PylonCameraImpl<USBCameraTrait> PylonUSBCamera;
 template <>
 bool PylonUSBCamera::applyCamSpecificStartupSettings(const PylonCameraParameter& parameters)
 {
+
+  ROS_WARN("Applying Params");
     try
     {
         //cam_->StartGrabbing();
@@ -94,12 +96,14 @@ bool PylonUSBCamera::applyCamSpecificStartupSettings(const PylonCameraParameter&
         if (parameters.startup_user_set_ == "Default")
             {
 
+                ROS_WARN("Applying user Params");
+
             // Remove all previous settings (sequencer etc.)
             // Default Setting = Free-Running
             cam_->UserSetSelector.SetValue(Basler_UniversalCameraParams::UserSetSelector_Default);
             cam_->UserSetLoad.Execute();
             // UserSetSelector_Default overrides Software Trigger Mode !!
-            cam_->TriggerSource.SetValue(Basler_UniversalCameraParams::TriggerSource_Software);
+            // cam_->TriggerSource.SetValue(Basler_UniversalCameraParams::TriggerSource_Software);
             cam_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
 
              /* Thresholds for the AutoExposure Functions:
@@ -114,6 +118,7 @@ bool PylonUSBCamera::applyCamSpecificStartupSettings(const PylonCameraParameter&
 
             cam_->AutoGainLowerLimit.SetValue(cam_->Gain.GetMin());
             cam_->AutoGainUpperLimit.SetValue(cam_->Gain.GetMax());
+
 
             // The gain auto function and the exposure auto function can be used at the same time. In this case,
             // however, you must also set the Auto Function Profile feature.
@@ -147,6 +152,63 @@ bool PylonUSBCamera::applyCamSpecificStartupSettings(const PylonCameraParameter&
                     << cam_->AutoTargetBrightness.GetMax() * 255
                     << "] which is the average pixel intensity.");
             }
+        else if (parameters.startup_user_set_ == "VersaVIS_Master")
+        {
+
+          ROS_WARN("Applying versavis Params");
+
+
+        // ExposureMode: "Timed"
+        cam_->ExposureMode.SetValue(Basler_UniversalCameraParams::ExposureMode_Timed);
+        // ExposureAuto: "Continuous"
+        cam_->ExposureAuto.SetValue(Basler_UniversalCameraParams::ExposureAuto_Continuous);
+        // ExposureTime: 1000.0
+        // cam_->ExposureTime.SetValue(1000.0);
+
+        // AcquisitionFrameRateEnable: "0"
+        cam_->AcquisitionFrameRateEnable.SetValue(false);
+
+        // AutoExposureTimeLowerLimit: 300.0
+        // AutoExposureTimeUpperLimit: 19000.0
+        cam_->AutoExposureTimeLowerLimit.SetValue(300.0);
+        cam_->AutoExposureTimeUpperLimit.SetValue(19000.0);
+
+
+        //
+        // AutoTargetBrightness: 0.33
+        cam_->AutoTargetBrightness.SetValue(0.33);
+
+        // GainAuto: "Continuous"
+        cam_->GainAuto.SetValue(Basler_UniversalCameraParams::GainAuto_Continuous);
+
+         // BalanceWhiteAuto: "Continuous"
+         cam_->BalanceWhiteAuto.SetValue(Basler_UniversalCameraParams::BalanceWhiteAuto_Continuous);
+
+         // TriggerMode: "On"
+         cam_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
+
+         // TriggerSource: "Line1"
+         cam_->TriggerSource.SetValue(Basler_UniversalCameraParams::TriggerSource_Line1);
+
+          // LineSelector: "Line4"
+          cam_->LineSelector.SetValue(Basler_UniversalCameraParams::LineSelector_Line4);
+
+          // LineMode: "Output"
+          cam_->LineMode.SetValue(Basler_UniversalCameraParams::LineMode_Output);
+
+          // LineSelector: "Line4"
+          cam_->LineSelector.SetValue(Basler_UniversalCameraParams::LineSelector_Line4);
+
+          // LineSource: "ExposureActive"
+          cam_->LineSource.SetValue(Basler_UniversalCameraParams::LineSource_ExposureActive);
+
+          // LineSelector: "Line4"
+          cam_->LineSelector.SetValue(Basler_UniversalCameraParams::LineSelector_Line4);
+
+          // LineInverter: True
+          cam_->LineInverter.SetValue(true);
+
+        }
         else if (parameters.startup_user_set_ == "UserSet1")
             {
                 cam_->UserSetSelector.SetValue(Basler_UniversalCameraParams::UserSetSelector_UserSet1);

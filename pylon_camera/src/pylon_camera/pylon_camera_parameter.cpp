@@ -38,7 +38,7 @@ namespace pylon_camera
 PylonCameraParameter::PylonCameraParameter() :
         camera_frame_("pylon_camera"),
         device_user_id_(""),
-        frame_rate_(5.0),
+        frame_rate_(20.0),
         camera_info_url_(""),
         image_encoding_(""),
         binning_x_(1),
@@ -67,10 +67,10 @@ PylonCameraParameter::PylonCameraParameter() :
         enable_status_publisher_(false),
         enable_current_params_publisher_(false),
         inter_pkg_delay_(1000),
-        startup_user_set_(""),
+        startup_user_set_("Default"),
         shutter_mode_(SM_DEFAULT),
-        auto_flash_(false), 
-        grab_timeout_(500),
+        auto_flash_(false),
+        grab_timeout_(5000),
         trigger_timeout_(5000),
 	grab_strategy_(0),
         white_balance_auto_(0),
@@ -78,7 +78,8 @@ PylonCameraParameter::PylonCameraParameter() :
         white_balance_ratio_red_(1.0),
         white_balance_ratio_green_(1.0),
         white_balance_ratio_blue_(1.0),
-        white_balance_ratio_given_(false)
+        white_balance_ratio_given_(false),
+        is_versavis_master_(true)
 {}
 
 PylonCameraParameter::~PylonCameraParameter()
@@ -94,6 +95,8 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     {
         nh.getParam("frame_rate", frame_rate_);
     }
+
+    is_versavis_master_ = true;
 
     nh.param<std::string>("camera_info_url", camera_info_url_, "");
     if ( nh.hasParam("camera_info_url") )
@@ -328,7 +331,7 @@ void PylonCameraParameter::validateParameterSet(const ros::NodeHandle& nh)
     {
         ROS_WARN_STREAM("The specified frame rate value - " << this->frame_rate_ << " Hz - is not valid!"
         << "-> Will reset it to default value (5 Hz).");
-        frame_rate_ = 5.0;
+        frame_rate_ = 10.0;
         nh.setParam("frame_rate", frame_rate_);
     }
 
@@ -391,7 +394,7 @@ const std::string& PylonCameraParameter::imageEncoding() const
     return image_encoding_;
 }
 
-bool PylonCameraParameter::setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format) 
+bool PylonCameraParameter::setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format)
 {
     try
     {

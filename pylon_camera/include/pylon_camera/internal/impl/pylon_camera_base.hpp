@@ -617,6 +617,7 @@ bool PylonCameraImpl<CameraTrait>::grab(Pylon::CGrabResultPtr& grab_result)
         }
     }
         cam_->RetrieveResult(grab_timeout_, grab_result, Pylon::TimeoutHandling_ThrowException);
+        // ROS_ERROR("Grab success");
     }
     catch ( const GenICam::GenericException &e )
     {
